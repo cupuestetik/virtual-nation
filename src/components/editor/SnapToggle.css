@@ -1,0 +1,15 @@
+/* SnapToggle styling */
+.snap-toggle {
+  padding: 6px 12px;
+  background: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 8px;
+}
+
+.snap-toggle:hover {
+  background: #34495e;
+}

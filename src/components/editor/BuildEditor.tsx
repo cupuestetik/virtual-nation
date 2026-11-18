@@ -3,7 +3,7 @@ import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useEditorStore } from '../../stores/useEditorStore';
 import { useWorldStore } from '../../stores/useWorldStore';
-import { assetRegistry } from '../../registry/assetRegistry';
+
 
 /**
  * Handles pointer interactions for placing assets in Build Mode.
@@ -31,7 +31,7 @@ export function BuildEditor() {
       const rect = gl.domElement.getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera({ x, y }, camera);
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
       const intersect = new THREE.Vector3();
       raycaster.ray.intersectPlane(plane, intersect);
       if (intersect) {
@@ -45,7 +45,7 @@ export function BuildEditor() {
       const rect = gl.domElement.getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera({ x, y }, camera);
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
       const intersect = new THREE.Vector3();
       raycaster.ray.intersectPlane(plane, intersect);
       if (intersect) {

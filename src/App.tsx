@@ -186,10 +186,8 @@ export default function App() {
             type="button"
             className={`mode-btn ${isGameplay ? "active" : ""}`}
             onClick={() => {
-              setMode("GAMEPLAY");
-              // clear editor state when leaving build mode
-              import { useEditorStore } from './stores/useEditorStore';
-              useEditorStore.getState().clearEditorState();
+                setMode("GAMEPLAY");
+                useEditorStore.getState().clearEditorState();
             }}
           >
             🎮 GAMEPLAY
@@ -225,7 +223,27 @@ export default function App() {
             move={move}
             look={look}
           />
+        {/* Canvas children */}
+        <World
+          onSelect={handleSelectBuilding}
+          move={move}
+          look={look}
+        />
+        {mode === "BUILD" && (
+          <>
+            <BuildEditor />
+            <GhostPreview />
+          </>
+        )}
         </Canvas>
+
+        {/* Build Mode UI components (non-3D) */}
+        {mode === "BUILD" && (
+          <div className="editor-ui">
+            <SnapToggle />
+            <AssetPicker />
+          </div>
+        )}
 
         {/* Kontrol sentuh mobile hanya aktif dan muncul di Gameplay Mode */}
         {isGameplay && (

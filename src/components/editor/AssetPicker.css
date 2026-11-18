@@ -1,0 +1,27 @@
+/* AssetPicker component styling */
+.asset-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.asset-picker button {
+  padding: 6px 10px;
+  background: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.asset-picker button.active {
+  background: #3498db;
+}
+
+.asset-picker button:hover {
+  background: #34495e;
+}
