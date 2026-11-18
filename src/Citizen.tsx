@@ -1,4 +1,3 @@
-
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
@@ -9,6 +8,7 @@ type CitizenProps = {
   speed: number;
   lane: "horizontal" | "vertical";
   position: number;
+  active?: boolean;
 };
 
 function Citizen({
@@ -17,15 +17,21 @@ function Citizen({
   speed,
   lane,
   position,
+  active = true,
 }: CitizenProps) {
   const character = useRef<Group>(null);
   const legs = useRef<Group>(null);
   const arms = useRef<Group>(null);
+  const simTime = useRef(offset);
 
-  useFrame((state) => {
+  useFrame((_, delta) => {
     if (!character.current) return;
 
-    const phase = (state.clock.elapsedTime * speed + offset) % 2;
+    // Hentikan pembaruan gerak & animasi secara efisien saat Build Mode aktif
+    if (!active) return;
+
+    simTime.current += delta;
+    const phase = (simTime.current * speed) % 2;
     const progress = phase <= 1 ? phase : 2 - phase;
     const direction = phase <= 1 ? 1 : -1;
 
@@ -41,7 +47,7 @@ function Citizen({
         direction > 0 ? 0 : Math.PI;
     }
 
-    const walking = Math.sin(state.clock.elapsedTime * speed * 8);
+    const walking = Math.sin(simTime.current * speed * 8);
 
     if (legs.current) {
       legs.current.rotation.x = walking * 0.45;
@@ -101,7 +107,7 @@ function Citizen({
   );
 }
 
-export default function CitizenSystem() {
+export default function CitizenSystem({ active = true }: { active?: boolean }) {
   const citizens = [
     { color: "#e76f51", lane: "horizontal" as const, position: -0.9 },
     { color: "#457b9d", lane: "horizontal" as const, position: 0.9 },
@@ -128,6 +134,7 @@ export default function CitizenSystem() {
           position={citizen.position}
           offset={index * 0.32}
           speed={0.35 + (index % 3) * 0.08}
+          active={active}
         />
       ))}
     </>

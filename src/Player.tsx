@@ -1,4 +1,3 @@
-
 import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3, MathUtils, Group } from "three";
@@ -16,9 +15,10 @@ export type LookInput = {
 type PlayerProps = {
   move: MoveInput;
   look: LookInput;
+  active?: boolean;
 };
 
-export default function Player({ move, look }: PlayerProps) {
+export default function Player({ move, look, active = true }: PlayerProps) {
   const player = useRef<Group>(null);
   const { camera } = useThree();
 
@@ -27,6 +27,12 @@ export default function Player({ move, look }: PlayerProps) {
 
   useFrame((_, delta) => {
     if (!player.current) return;
+
+    // Jika sedang dalam Build Mode, nonaktifkan pergerakan pemain dan kontrol kamera
+    if (!active) {
+      player.current.position.copy(position.current);
+      return;
+    }
 
     const speed = 5;
     const forward = -move.y;
@@ -48,7 +54,7 @@ export default function Player({ move, look }: PlayerProps) {
     position.current.x += normalizedX * speed * delta;
     position.current.z += normalizedZ * speed * delta;
 
-    // Batas sementara area kota
+    // Batas area kota
     position.current.x = MathUtils.clamp(position.current.x, -20, 20);
     position.current.z = MathUtils.clamp(position.current.z, -20, 20);
 
@@ -59,7 +65,7 @@ export default function Player({ move, look }: PlayerProps) {
       player.current.rotation.y = Math.atan2(normalizedX, normalizedZ);
     }
 
-    // Kamera mengikuti karakter dari belakang
+    // Kamera mengikuti karakter dari belakang (Third-person view)
     const distance = 6;
     const height = 2.5 + look.pitch * 3;
 

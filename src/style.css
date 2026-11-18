@@ -352,3 +352,52 @@ button {
     height: 45px;
   }
 }
+
+/* MODE SWITCHER UI */
+.mode-switcher {
+  display: flex;
+  align-items: center;
+  background: #111c24;
+  border: 1px solid #30434b;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.mode-btn {
+  border: none;
+  background: transparent;
+  color: #9caeb2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mode-btn:hover {
+  color: #ffffff;
+  background: #1e3340;
+}
+
+.mode-btn.active {
+  background: #e3c77d;
+  color: #172832;
+  box-shadow: 0 2px 8px rgba(227, 199, 125, 0.35);
+}
+
+@media (max-width: 768px) {
+  .mode-switcher {
+    padding: 2px;
+  }
+  .mode-btn {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+}
+

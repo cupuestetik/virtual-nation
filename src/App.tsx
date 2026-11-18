@@ -4,7 +4,9 @@ import CitizenSystem from "./Citizen";
 import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useWorldStore } from "./stores/useWorldStore";
+import { useEditorStore } from "./stores/useEditorStore";
 import { WorldRenderer } from "./components/world/WorldRenderer";
+import { BuildCamera } from "./components/camera/BuildCamera";
 import type { WorldObject } from "./types/world";
 import type { AssetDefinition } from "./types/asset";
 import "./style.css";
@@ -72,6 +74,9 @@ function World({
   move: MoveInput;
   look: LookInput;
 }) {
+  const mode = useEditorStore((state) => state.mode);
+  const isGameplay = mode === "GAMEPLAY";
+
   return (
     <>
       <color attach="background" args={["#b9cbd0"]} />
@@ -104,9 +109,14 @@ function World({
 
       <Road />
       
-      <Player move={move} look={look} />
+      {/* Karakter Pemain (Kontrol pergerakan & kamera hanya aktif di Gameplay Mode) */}
+      <Player move={move} look={look} active={isGameplay} />
 
-      <CitizenSystem />
+      {/* Sistem Warga (Pergerakan berhenti otomatis saat Build Mode) */}
+      <CitizenSystem active={isGameplay} />
+
+      {/* Kamera khusus Build Mode (Hanya aktif saat Build Mode) */}
+      {!isGameplay && <BuildCamera />}
       
       {/* Pepohonan Lingkungan */}
       {[
@@ -117,7 +127,7 @@ function World({
         <Tree key={i} position={position as [number, number, number]} />
       ))}
 
-      {/* Seluruh Bangunan Dirender Dinamis dari WorldStore via WorldRenderer */}
+      {/* Seluruh Bangunan Dirender Dinamis dari WorldStore via WorldRenderer (SHARED oleh kedua mode) */}
       <WorldRenderer onSelect={onSelect} />
     </>
   );
@@ -126,6 +136,9 @@ function World({
 export default function App() {
   const [selected, setSelected] = useState<SelectedBuildingInfo | null>(null);
   const buildingCount = useWorldStore((state) => state.objects.length);
+  const mode = useEditorStore((state) => state.mode);
+  const setMode = useEditorStore((state) => state.setMode);
+  const isGameplay = mode === "GAMEPLAY";
 
   const [move, setMove] = useState<MoveInput>({
     x: 0,
@@ -162,6 +175,25 @@ export default function App() {
           <div className="brand">VIRTUAL NATION</div>
           <div className="subtitle">Simulasi pembangunan sebuah negara</div>
         </div>
+
+        {/* Pengalih Mode Permainan (Mode Switcher) */}
+        <div className="mode-switcher" role="group" aria-label="Mode Permainan">
+          <button
+            type="button"
+            className={`mode-btn ${isGameplay ? "active" : ""}`}
+            onClick={() => setMode("GAMEPLAY")}
+          >
+            🎮 GAMEPLAY
+          </button>
+          <button
+            type="button"
+            className={`mode-btn ${!isGameplay ? "active" : ""}`}
+            onClick={() => setMode("BUILD")}
+          >
+            🏗️ BUILD MODE
+          </button>
+        </div>
+
         <div className="country-status">
           <span className="status-dot" />
           NEGARA NUSANTARA
@@ -186,23 +218,37 @@ export default function App() {
           />
         </Canvas>
 
-        <MobileControls
-          onMove={setMove}
-          onLook={handleLook}
-        />
+        {/* Kontrol sentuh mobile hanya aktif dan muncul di Gameplay Mode */}
+        {isGameplay && (
+          <MobileControls
+            onMove={setMove}
+            onLook={handleLook}
+          />
+        )}
 
         <div className="rotate-hint">
           Putar HP kamu ke posisi horizontal untuk bermain
         </div>
 
         <div className="map-label">
-          <span>01</span> IBU KOTA NUSANTARA
+          <span>{isGameplay ? "01" : "BUILD"}</span>{" "}
+          {isGameplay ? "IBU KOTA NUSANTARA" : "NAVIGASI ARSITEK KOTA"}
         </div>
 
         <div className="controls-hint">
-          Klik bangunan untuk melihat informasi
-          <br />
-          Geser untuk memutar · Scroll untuk zoom
+          {isGameplay ? (
+            <>
+              Gunakan joystick untuk gerak · Geser kanan untuk arah kamera
+              <br />
+              Klik bangunan untuk melihat informasi
+            </>
+          ) : (
+            <>
+              Geser 1 jari / klik kiri untuk putar · 2 jari / klik kanan untuk geser
+              <br />
+              Scroll / cubit untuk zoom · Kamera terbatas di area kota
+            </>
+          )}
         </div>
 
         {selected && (
@@ -232,7 +278,7 @@ export default function App() {
         <div><strong>12</strong><span>Penduduk</span></div>
         <div><strong>01</strong><span>Kawasan Kota</span></div>
         <div><strong>01</strong><span>Negara</span></div>
-        <div className="prototype-tag">PROTOTYPE V 0.1</div>
+        <div className="prototype-tag">{isGameplay ? "GAMEPLAY V 0.3" : "BUILD MODE"}</div>
       </footer>
     </main>
   );
