@@ -14,6 +14,7 @@ import { BuildCamera } from "./components/camera/BuildCamera";
 import type { WorldObject } from "./types/world";
 import type { AssetDefinition } from "./types/asset";
 import "./style.css";
+import WorldSlotBar from "./components/world/WorldSlotBar";
 
 export interface SelectedBuildingInfo {
   id: number | string;
@@ -111,25 +112,27 @@ function World({
         <meshStandardMaterial color="#60b5c9" metalness={0.3} roughness={0.2} />
       </mesh>
 
-      <Road />
+      {useWorldStore(state => state.metadata.id) === "vn_world_default" && <Road />}
       
       {/* Karakter Pemain (Kontrol pergerakan & kamera hanya aktif di Gameplay Mode) */}
       <Player move={move} look={look} active={isGameplay} />
 
       {/* Sistem Warga (Pergerakan berhenti otomatis saat Build Mode) */}
-      <CitizenSystem active={isGameplay} />
+      {useWorldStore(state => state.metadata.id) === "vn_world_default" && <CitizenSystem active={isGameplay} />}
 
       {/* Kamera khusus Build Mode (Hanya aktif saat Build Mode) */}
       {!isGameplay && <BuildCamera />}
       
       {/* Pepohonan Lingkungan */}
-      {[
+{useWorldStore(state => state.metadata.id) === "vn_world_default" && (
+      [
         [-4, 0, -5], [4, 0, -5], [-4, 0, 5], [4, 0, 5],
         [-17, 0, -5], [-17, 0, 5], [17, 0, -5], [17, 0, 5],
         [-5, 0, -17], [5, 0, -17], [-5, 0, 17], [5, 0, 17],
       ].map((position, i) => (
         <Tree key={i} position={position as [number, number, number]} />
-      ))}
+      ))
+)}
 
       {/* Seluruh Bangunan Dirender Dinamis dari WorldStore via WorldRenderer (SHARED oleh kedua mode) */}
       <WorldRenderer onSelect={onSelect} />
@@ -175,6 +178,8 @@ export default function App() {
   return (
     <main className="app">
       <header className="topbar">
+          {/* New World UI */}
+          <WorldSlotBar />
         <div>
           <div className="brand">VIRTUAL NATION</div>
           <div className="subtitle">Simulasi pembangunan sebuah negara</div>

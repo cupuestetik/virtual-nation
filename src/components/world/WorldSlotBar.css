@@ -1,0 +1,41 @@
+/* Minimal placeholder styling for WorldSlotBar */
+.world-slot-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.world-slot-bar .new-world-btn {
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+
+.world-slot-bar .world-slot-select {
+  padding: 0.2rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 4px;
+  min-width: 200px;
+}
+.modal-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
