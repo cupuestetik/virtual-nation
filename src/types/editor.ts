@@ -1,9 +1,11 @@
 export type GameMode = 'GAMEPLAY' | 'BUILD';
 
 export interface EditorModeState {
+  // Mode management
   mode: GameMode;
   setMode: (mode: GameMode) => void;
   toggleMode: () => void;
+
   // Build editor specifics
   selectedAssetId: string | null;
   snapEnabled: boolean;
@@ -12,7 +14,4 @@ export interface EditorModeState {
   toggleSnap: () => void;
   setGhostPosition: (pos: [number, number, number] | null) => void;
   clearEditorState: () => void;
-  mode: GameMode;
-  setMode: (mode: GameMode) => void;
-  toggleMode: () => void;
 }

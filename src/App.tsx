@@ -1,10 +1,14 @@
 import Player, { type MoveInput, type LookInput } from "./Player";
+import { BuildEditor } from "./components/editor/BuildEditor";
+import { GhostPreview } from "./components/editor/GhostPreview";
+import { SnapToggle } from "./components/editor/SnapToggle";
+import { AssetPicker } from "./components/editor/AssetPicker";
+import { useEditorStore } from "./stores/useEditorStore";
 import MobileControls from "./MobileControls";
 import CitizenSystem from "./Citizen";
 import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useWorldStore } from "./stores/useWorldStore";
-import { useEditorStore } from "./stores/useEditorStore";
 import { WorldRenderer } from "./components/world/WorldRenderer";
 import { BuildCamera } from "./components/camera/BuildCamera";
 import type { WorldObject } from "./types/world";
@@ -181,7 +185,12 @@ export default function App() {
           <button
             type="button"
             className={`mode-btn ${isGameplay ? "active" : ""}`}
-            onClick={() => setMode("GAMEPLAY")}
+            onClick={() => {
+              setMode("GAMEPLAY");
+              // clear editor state when leaving build mode
+              import { useEditorStore } from './stores/useEditorStore';
+              useEditorStore.getState().clearEditorState();
+            }}
           >
             🎮 GAMEPLAY
           </button>
